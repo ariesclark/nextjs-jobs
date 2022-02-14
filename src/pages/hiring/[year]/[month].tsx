@@ -1,28 +1,28 @@
 import Head from "next/head";
 import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import remarkGemoji from "remark-gemoji";
-import remarkGithub from "remark-github";
-import { remarkTruncateLinks } from "remark-truncate-links";
+import ReactDOMServer from "react-dom/server";
 import ms from "ms";
 import {
 	GetStaticPaths, GetStaticProps, InferGetStaticPropsType, NextPage
 } from "next";
 
-import { getKeywordIcons } from "../../../lib/keywords";
 import {
 	ALL_VALID_DATES,
 	formatDate, isValidDate, normalizeDate
 } from "../../../lib/date";
-import { getHiringPosts, HiringPost } from "../../../lib/query";
+import { getHiringPosts, type HiringPost } from "../../../lib/query";
+import { HiringItem } from "../../../components/HiringItem";
 
 type RequestParams = { year?: string, month?: string };
 type RequestProps = { posts: HiringPost[], when: RequestParams };
 
 function getSocialImageURL (date: Date, posts: HiringPost[]): string {
-	const text = `Job board for<br/>**${formatDate(date)}** 🚀<br/>`
-        + `<p style="font-size:50px">${posts.length} jobs currently listed.</p>`;
+	const text = ReactDOMServer.renderToStaticMarkup((
+		<div>
+			<span>Job board for<br /> <b>{formatDate(date)}</b> 🚀<br /></span>
+			<span style={{ fontSize: "50px" }}>{posts.length} jobs currently listed.</span>
+		</div>
+	));
 
 	return `https://og-image.vercel.app/${encodeURIComponent(text)}.png?theme=dark&md=1&fontSize=75px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-white-logo.svg&widths=350&heights=200`;
 }
@@ -71,6 +71,8 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 	const nextMonth = new Date(date.getFullYear(), date.getMonth() + 1);
 	const isNextMonthValid = isValidDate(nextMonth);
 
+	const newestPostDate = posts[0] ? new Date(posts[0].updatedAt) : date;
+
 	return (
 		<div className="flex flex-col justify-between min-h-screen bg-neutral-900 text-neutral-200">
 			<Head>
@@ -117,8 +119,8 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 						{date.getTime() !== latestDate.getTime() && (
 							<div className="flex flex-col mx-auto text-xs">
 								<div className="flex space-x-1">
-									<span>Currently viewing postings that are</span>
-									<b>{ms(latestDate.getTime() - date.getTime(), { long: true })} old</b>.
+									<span>Currently viewing postings that are at least</span>
+									<b>{ms(new Date().getTime() - newestPostDate.getTime(), { long: true })} old</b>.
 								</div>
 								<div className="flex space-x-1">
 									<span>Would you like to view the</span>
@@ -134,68 +136,19 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 				</div>
 				<div className="flex flex-wrap">
 					{posts.map((post) => (
-						<div key={post.sourceUrl} className="w-full md:w-1/2 lg:w-1/3">
-							<div className="flex flex-col m-2 space-y-4 border bg-neutral-800 border-neutral-700">
-								<div className="flex flex-col p-4 space-y-2 border-b border-neutral-700">
-									<span className="text-xl font-inter">
-										{post.companyName}
-									</span>
-									<div className="flex flex-wrap gap-1">
-										{post.keywords.map((value: string) => (
-											<div key={value} className="flex p-1 px-2 space-x-2 rounded bg-neutral-900">
-												<span className="my-auto text-xs text-neutral-300">
-													{value}
-												</span>
-												{getKeywordIcons(value).length ? (
-													<div className="flex space-x-1">
-														{getKeywordIcons(value).map((item) => (
-															<span key={item}>{item}</span>
-														))}
-													</div>
-												) : false}
-											</div>
-										))}
-									</div>
-								</div>
-								<div className="">
-									<ReactMarkdown
-										remarkPlugins={[
-											remarkGfm,
-											[remarkGithub, { repository: "vercel/next.js" }],
-											remarkGemoji,
-											remarkTruncateLinks
-										]}
-										className="px-4 prose prose-invert max-h-96 overflow-y-clip"
-									>
-										{(post.bodyText as string).replace(/link above/gi, "link below")}
-									</ReactMarkdown>
-									<Link href={post.sourceUrl}>
-										<a target="_blank" className="flex px-4 py-1 space-x-1 text-xs text-neutral-300">
-											<span className="">Read more</span>
-											{/* eslint-disable-next-line max-len */}
-											<svg className="h-1.5 my-auto" viewBox="0 0 768 512" xmlns="http://www.w3.org/2000/svg">
-												<path fill="currentColor" d="M0 0l384 512L768 0H0z" />
-											</svg>
-										</a>
-									</Link>
-								</div>
-
-								<Link href={post.contactUrl}>
-									<a target="_blank" className="flex w-full p-4 bg-blue-600 border-t border-neutral-700">
-										<span className="mx-auto text-center">Reach out</span>
-									</a>
-								</Link>
-							</div>
-						</div>
+						<HiringItem
+							key={post.sourceUrl}
+							post={post}
+						/>
 					))}
 
 				</div>
 			</div>
-			<div className="border-t border-neutral-700">
+			<div className="border-t border-neutral-700 font-inter">
 				<div className="container flex flex-col justify-between px-4 py-8 mx-auto space-y-4 lg:px-32 lg:flex-row lg:space-y-0 lg:space-x-8">
 					<div className="flex flex-wrap gap-4 text-sm text-neutral-300">
 						<div className="flex flex-wrap w-full gap-4 text-sm text-neutral-300">
-							<Link href="https://github.com/">
+							<Link href="https://github.com/rubybb/nextjs-jobs">
 								<a target="_blank">
 									<div className="flex space-x-2">
 										<svg className="h-6 my-auto" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -239,7 +192,7 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 							</Link>
 						</div>
 					</div>
-					<span className="max-w-md text-xs text-neutral-400">
+					<span className="max-w-md text-xs text-neutral-400 font-inter">
 						This site is maintained and created by an independent individual with no affiliation with
 						{" "}
 						<Link href="https://vercel.com/"><a target="_blank" className="underline">Vercel</a></Link>
