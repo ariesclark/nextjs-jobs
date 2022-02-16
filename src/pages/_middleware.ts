@@ -7,7 +7,7 @@ export async function middleware (req: NextRequest) {
 		const date = new Date();
 	
 		req.nextUrl.pathname = `/hiring/${date.getFullYear()}/${date.getMonth()}`;
-		return NextResponse.redirect(url, 303);
+		return NextResponse.redirect(req.nextUrl, 303);
 	}
 
 	return NextResponse.next();
