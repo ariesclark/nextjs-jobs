@@ -4,27 +4,27 @@ import remarkGfm from "remark-gfm";
 import remarkGemoji from "remark-gemoji";
 import remarkGithub from "remark-github";
 import Link from "next/link";
+import ms from "ms";
 
 import { getKeywordIcons } from "../lib/keywords";
 import { type HiringPost } from "../lib/query";
-import ms from "ms";
 
 export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
-    const presentDate = new Date();
+	const presentDate = new Date();
 
-    const publishDate = new Date(post.publishedAt);
-    const updateDate = new Date(post.updatedAt);
+	const publishDate = new Date(post.publishedAt);
+	const updateDate = new Date(post.updatedAt);
 
 	return (
 		<div className="w-full md:w-1/2 lg:w-1/3">
-			<div className="flex flex-col m-2 border bg-neutral-800 border-neutral-700">
+			<div className="flex flex-col m-2 border rounded bg-neutral-800 border-neutral-700">
 				<div className="flex flex-col p-4 space-y-2 border-b border-neutral-700">
 					<span className="text-xl font-inter">
 						{post.companyName}
 					</span>
 					<div className="flex flex-wrap gap-1">
 						{post.keywords.map((value: string) => (
-							<div key={value} className="flex justify-between flex-grow p-1 px-2 space-x-2 border-l-2 border-black bg-neutral-900">
+							<div key={value} className="flex justify-between flex-grow p-1 px-2 space-x-2 rounded bg-neutral-900">
 								<span className="my-auto text-xs tracking-wide text-neutral-300">
 									{value}
 								</span>
@@ -40,7 +40,7 @@ export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 							</div>
 						))}
 					</div>
-                    <div className="flex space-x-4 text-xs text-neutral-300">
+					<div className="flex space-x-4 text-xs text-neutral-300">
 						<div className="flex space-x-2">
 							<svg className="w-3 my-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
 								<path fill="currentColor" d="M16,30A14,14,0,1,1,30,16,14,14,0,0,1,16,30ZM16,4A12,12,0,1,0,28,16,12,12,0,0,0,16,4Z" />
@@ -65,7 +65,7 @@ export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 							remarkGemoji,
 							remarkTruncateLinks
 						]}
-						className="px-4 prose prose-invert max-h-96 overflow-y-clip"
+						className="px-4 prose prose-invert max-h-96 overflow-y-clip "
 					>
 						{(post.bodyText as string).replace(/link above/gi, "link below")}
 					</ReactMarkdown>
@@ -80,7 +80,7 @@ export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 				</div>
 
 				<Link href={post.contactUrl}>
-					<a target="_blank" className="flex w-full p-4 bg-blue-600 border-t hover:bg-blue-700 border-neutral-700">
+					<a target="_blank" className="flex w-full p-4 bg-blue-600 border-t rounded-b hover:bg-blue-700 border-neutral-700">
 						<span className="mx-auto text-center">Reach out</span>
 					</a>
 				</Link>
