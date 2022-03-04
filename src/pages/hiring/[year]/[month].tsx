@@ -8,7 +8,7 @@ import {
 
 import {
 	ALL_VALID_DATES,
-	formatDate, getDateUrl, isValidDate, normalizeDate
+	formatDate, getDateUrl, getMonthName, isValidDate, normalizeDate
 } from "../../../lib/date";
 import { getHiringPosts, type HiringPost } from "../../../lib/query";
 import { HiringItem } from "../../../components/HiringItem";
@@ -34,7 +34,7 @@ export const getStaticPaths: GetStaticPaths<RequestParams> = function () {
 			return {
 				params: {
 					year: date.getFullYear().toString(),
-					month: date.getMonth().toString()
+					month: getMonthName(date, false)
 				}
 			};
 		})

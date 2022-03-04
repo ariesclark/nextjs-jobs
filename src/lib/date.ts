@@ -34,6 +34,11 @@ export function formatDate (date: Date, internal: boolean = false): string {
 	}).format(date);
 }
 
+export function getMonthName (date: Date, capitalize: boolean = true): string {
+	const monthName = new Intl.DateTimeFormat("en", { month: "long" }).format(date);
+	return capitalize ? monthName : monthName.toLowerCase();
+}
+
 export function getDateUrl (date: Date) {
-	return `/hiring/${date.getFullYear()}/${new Intl.DateTimeFormat("en", { month: "long" }).format(date).toLowerCase()}`;
+	return `/hiring/${date.getFullYear()}/${getMonthName(date, false)}`;
 }
