@@ -67,7 +67,9 @@ export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 						]}
 						className="px-4 prose prose-invert max-h-96 overflow-y-clip "
 					>
-						{(post.bodyText as string).replace(/link above/gi, "link below")}
+						{(post.bodyText as string)
+							.replace(/link above/gi, "link below")
+							.replace(/above link/gi, "below link")}
 					</ReactMarkdown>
 					<Link href={post.sourceUrl}>
 						<a target="_blank" className="flex px-4 py-1 my-4 space-x-1 text-xs text-neutral-300">

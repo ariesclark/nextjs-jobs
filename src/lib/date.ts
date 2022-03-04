@@ -33,3 +33,7 @@ export function formatDate (date: Date, internal: boolean = false): string {
 		year: "numeric"
 	}).format(date);
 }
+
+export function getDateUrl (date: Date) {
+	return `/hiring/${date.getFullYear()}/${new Intl.DateTimeFormat("en", { month: "long" }).format(date).toLowerCase()}`;
+}

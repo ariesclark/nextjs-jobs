@@ -8,7 +8,7 @@ import {
 
 import {
 	ALL_VALID_DATES,
-	formatDate, isValidDate, normalizeDate
+	formatDate, getDateUrl, isValidDate, normalizeDate
 } from "../../../lib/date";
 import { getHiringPosts, type HiringPost } from "../../../lib/query";
 import { HiringItem } from "../../../components/HiringItem";
@@ -43,7 +43,7 @@ export const getStaticPaths: GetStaticPaths<RequestParams> = function () {
 
 export const getStaticProps: GetStaticProps<RequestProps, RequestParams> = async function (context) {
 	const date = (context.params?.year !== undefined && context.params?.month !== undefined
-		? new Date(Number.parseInt(context.params?.year, 10), Number.parseInt(context.params?.month, 10))
+		? new Date(`${context.params?.month} 1 ${context.params?.year}`)
 		: new Date()
 	);
 
@@ -100,7 +100,7 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 					</h1>
 					<div className="flex flex-col space-y-2">
 						<div className="flex mx-auto space-x-4">
-							<Link href={`/hiring/${lastMonth.getFullYear()}/${lastMonth.getMonth()}`}>
+							<Link href={getDateUrl(lastMonth)}>
 								<a className={`flex px-2 py-1 ${!isLastMonthValid ? "text-neutral-500 cursor-not-allowed" : ""}`}>
 									<svg className="h-2.5 my-auto" viewBox="0 0 768 896" xmlns="http://www.w3.org/2000/svg">
 										<path fill="currentColor" d="M768 896L0 448 768 0v896z" />
@@ -108,7 +108,7 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 								</a>
 							</Link>
 							<h2 className="w-48 font-mono text-lg select-none">{formatDate(date)}</h2>
-							<Link href={`/hiring/${nextMonth.getFullYear()}/${nextMonth.getMonth()}`}>
+							<Link href={getDateUrl(nextMonth)}>
 								<a className={`flex px-2 py-1 ${!isNextMonthValid ? "text-neutral-500 cursor-not-allowed" : ""}`}>
 									<svg className="h-2.5 my-auto" viewBox="0 0 768 896" xmlns="http://www.w3.org/2000/svg">
 										<path fill="currentColor" d="M0 0l768 448L0 896V0z" />
@@ -124,7 +124,7 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 								</div>
 								<div className="flex space-x-1">
 									<span>Would you like to view the</span>
-									<Link href={`/hiring/${latestDate.getFullYear()}/${latestDate.getMonth()}`}>
+									<Link href={getDateUrl(latestDate)}>
 										<a className="underline">
 											latest postings
 										</a>
