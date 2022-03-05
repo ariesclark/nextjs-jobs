@@ -81,6 +81,7 @@ const HiringIndexPage: NextPage<InferGetStaticPropsType<typeof getStaticProps>> 
 
 				<meta property="og:title" content={formatDate(date)} />
 				<meta property="og:image" content={getSocialImageURL(date, posts)} />
+				<meta name="twitter:card" content="summary_large_image" />
 
 				<meta property="og:type" content="website" />
 				<meta property="og:locale" content="en_US" />
