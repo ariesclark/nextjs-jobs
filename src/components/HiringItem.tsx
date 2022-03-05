@@ -9,6 +9,20 @@ import ms from "ms";
 import { getKeywordIcons } from "../lib/keywords";
 import { type HiringPost } from "../lib/query";
 
+const BoldText: React.FC = function ({ children }) {
+	return <b>{children}</b>;
+};
+
+const LinkText: React.FC<{ href?: string }> = function ({ href, children }) {
+	return (
+		<Link href={href || "#"} passHref>
+			<a target="_blank">
+				{children}
+			</a>
+		</Link>
+	);
+};
+
 export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 	const presentDate = new Date();
 
@@ -59,6 +73,15 @@ export const HiringItem: React.FC<{ post: HiringPost }> = function ({ post }) {
 				</div>
 				<div className="pt-4">
 					<ReactMarkdown
+						components={{
+							h1: BoldText,
+							h2: BoldText,
+							h3: BoldText,
+							h4: BoldText,
+							h5: BoldText,
+							h6: BoldText,
+							a: LinkText
+						}}
 						remarkPlugins={[
 							remarkGfm,
 							[remarkGithub, { repository: "vercel/next.js" }],
